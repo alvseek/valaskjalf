@@ -120,12 +120,15 @@ class SqliteWorkspaceAccess(_Access):
     ) -> HomeAccount:
         conn = self._connect()
         try:
+            existing = self._lookup(conn, issuer, subject)
+            if existing is not None:
+                return HomeAccount(existing, False)
             conn.execute("BEGIN IMMEDIATE")
             existing = self._lookup(conn, issuer, subject)
             if existing is not None:
                 conn.commit()
                 return HomeAccount(existing, False)
-            user_id, now = str(uuid4()), _now()
+            user_id, now = uuid4().hex, _now()
             conn.execute(
                 "INSERT INTO account (user_id, display_name, email, created_date) "
                 "VALUES (?, ?, ?, ?)", (user_id, display_name, email, now),
@@ -168,7 +171,7 @@ class PostgresWorkspaceAccess(_Access):
             if existing is not None:
                 conn.commit()
                 return HomeAccount(existing, False)
-            user_id, now = str(uuid4()), _now()
+            user_id, now = uuid4().hex, _now()
             conn.execute(
                 "INSERT INTO account (user_id, display_name, email, created_date) "
                 "VALUES (%s, %s, %s, %s)", (user_id, display_name, email, now),

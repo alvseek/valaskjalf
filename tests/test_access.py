@@ -4,7 +4,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import closing
 from pathlib import Path
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 
@@ -98,6 +98,7 @@ def test_lookup_creation_and_labels(store):
     assert execute(store, "SELECT count(*) FROM account")[0][0] == 0
     first = store.get_or_create_home("issuer", "subject", display_name="First", email="same")
     assert first.created
+    assert first.user_id == UUID(first.user_id).hex
     assert store.lookup_home("issuer", "subject") == first.user_id
     again = store.get_or_create_home("issuer", "subject", display_name="Changed", email="new")
     assert again.user_id == first.user_id and not again.created
