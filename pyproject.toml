@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "valaskjalf-workspace-access"
+version = "0.1.0"
+description = "Home identity and active workspace resolution"
+requires-python = ">=3.11"
+dependencies = []
+readme = "README.md"
+
+[project.optional-dependencies]
+postgres = ["psycopg[binary]>=3.1,<4"]
+test = ["pytest>=8,<10"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/valaskjalf_workspace_access"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
